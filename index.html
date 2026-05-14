@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>InnovatEPAM Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.min.css">
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+
+    <!-- ═══════════════════════════════════════
+         PRE-AUTH ONBOARDING OVERLAY
+    ═══════════════════════════════════════ -->
+    <div id="onboardingOverlay" class="onboarding-overlay" role="dialog" aria-modal="true" aria-label="Welcome tour" hidden>
+      <div class="onboarding-card">
+        <div class="ob-glow" aria-hidden="true"></div>
+
+        <div class="ob-progress" id="obProgress">
+          <span class="ob-dot active" data-i="0"></span>
+          <span class="ob-dot" data-i="1"></span>
+          <span class="ob-dot" data-i="2"></span>
+          <span class="ob-dot" data-i="3"></span>
+          <span class="ob-dot" data-i="4"></span>
+        </div>
+
+        <div class="ob-steps">
+          <!-- Step 0: Welcome -->
+          <div class="ob-step active" data-step="0">
+            <div class="ob-glyph-wrap"><span class="ob-glyph">✦</span></div>
+            <h2>Welcome to InnovatEPAM</h2>
+            <p>The employee innovation hub where great ideas become real impact. Submit, track, and evaluate ideas — all in one auditable workflow built for modern teams.</p>
+            <div class="ob-preview-strip">
+              <span>📋 Submit ideas</span>
+              <span>📊 Track status</span>
+              <span>✅ Get decisions</span>
+            </div>
+          </div>
+
+          <!-- Step 1: Submit -->
+          <div class="ob-step" data-step="1">
+            <div class="ob-glyph-wrap"><span class="ob-glyph">💡</span></div>
+            <h2>Share your ideas</h2>
+            <p>Give your idea a clear title, pick a category, and write a description. You can also attach a support file — a doc, diagram, or data sheet — to make your case stronger.</p>
+            <div class="ob-mini-form">
+              <div class="ob-field"><span>Title</span><div class="ob-input-mock">AI-powered meeting summarizer</div></div>
+              <div class="ob-field"><span>Category</span><div class="ob-input-mock ob-select">Developer Productivity</div></div>
+            </div>
+          </div>
+
+          <!-- Step 2: Track -->
+          <div class="ob-step" data-step="2">
+            <div class="ob-glyph-wrap"><span class="ob-glyph">🔍</span></div>
+            <h2>Track every decision</h2>
+            <p>Your idea moves through a visible pipeline with a full audit trail at each stage. Every status change is timestamped and includes an evaluator comment.</p>
+            <div class="ob-status-demo">
+              <div class="ob-status-step active-demo"><span class="status-badge new">Submitted</span><span class="ob-check">✓</span></div>
+              <div class="ob-arrow">→</div>
+              <div class="ob-status-step"><span class="status-badge review">Under Review</span></div>
+              <div class="ob-arrow">→</div>
+              <div class="ob-status-step"><span class="status-badge accepted">Accepted</span></div>
+            </div>
+          </div>
+
+          <!-- Step 3: Role choice (interactive) -->
+          <div class="ob-step" data-step="3">
+            <div class="ob-glyph-wrap"><span class="ob-glyph">🎭</span></div>
+            <h2>Choose your role</h2>
+            <p>Pick how you'll use the portal today. You can always switch by logging in with a different account.</p>
+            <div class="ob-role-cards" id="obRoleCards">
+              <button class="ob-role-card" type="button" data-role="submitter">
+                <span class="ob-role-icon">💡</span>
+                <strong>Submitter</strong>
+                <p>I have ideas I want to share with the organization for evaluation.</p>
+              </button>
+              <button class="ob-role-card" type="button" data-role="admin">
+                <span class="ob-role-icon">⚖️</span>
+                <strong>Evaluator Admin</strong>
+                <p>I review submitted ideas and make accept/reject decisions with feedback.</p>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4: Get started (role-aware) -->
+          <div class="ob-step" data-step="4">
+            <div class="ob-glyph-wrap"><span class="ob-glyph">🚀</span></div>
+            <h2 id="obFinalTitle">Ready to go!</h2>
+            <p id="obFinalText">Sign in or register to get started. Use the demo accounts on the sign-in page to instantly explore both roles.</p>
+            <div class="ob-final-tips" id="obFinalTips">
+              <div class="ob-tip-row"><span>→</span><span>Use demo accounts to explore without registering</span></div>
+              <div class="ob-tip-row"><span>→</span><span>Register to create a persistent user account</span></div>
+              <div class="ob-tip-row"><span>→</span><span>Data is saved locally in your browser</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ob-actions">
+          <button class="ob-skip" id="obSkipBtn" type="button">Skip</button>
+          <button class="primary-button ob-next" id="obNextBtn" type="button">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         POST-LOGIN FIRST-RUN GUIDE
+    ═══════════════════════════════════════ -->
+    <div id="firstRunGuide" class="frg-overlay" role="dialog" aria-modal="true" aria-label="Getting started guide" hidden>
+      <div class="frg-backdrop" id="frgBackdrop"></div>
+      <div class="frg-card">
+        <button class="frg-close" id="frgClose" aria-label="Close guide">✕</button>
+        <div class="frg-header">
+          <div class="frg-icon-wrap" id="frgIconWrap">🎉</div>
+          <h2 id="frgTitle">Welcome!</h2>
+          <p id="frgSubtitle" class="frg-sub">Here's how to get started:</p>
+        </div>
+        <ol class="frg-steps" id="frgSteps"></ol>
+        <div class="frg-footer">
+          <button class="ob-skip" id="frgLater" type="button">Maybe later</button>
+          <a class="primary-button" id="frgAction" href="#submit">Get started →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         REUSABLE CONFIRM MODAL
+    ═══════════════════════════════════════ -->
+    <div id="confirmModal" class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle" hidden>
+      <div class="cm-backdrop" data-cm-cancel></div>
+      <div class="cm-card">
+        <h3 id="cmTitle" class="cm-title">Confirm</h3>
+        <p id="cmMessage" class="cm-message"></p>
+        <textarea id="cmInput" class="cm-input" rows="2" hidden></textarea>
+        <p id="cmError" class="cm-error" hidden></p>
+        <div class="cm-actions">
+          <button id="cmCancel" class="ghost-button" type="button" data-cm-cancel>Cancel</button>
+          <button id="cmConfirm" class="primary-button" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         AUTH PAGE (unauthenticated)
+    ═══════════════════════════════════════ -->
+    <button class="theme-toggle auth-theme-toggle" id="authThemeToggle" type="button" aria-label="Toggle theme">☀ Light</button>
+
+    <div id="authPage" class="auth-page">
+
+      <!-- Left: Animated brand hero -->
+      <div class="auth-hero">
+        <!-- Animated background elements -->
+        <div class="hero-stars" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-3" aria-hidden="true"></div>
+        <div class="hero-particles" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="hero-edge-fade" aria-hidden="true"></div>
+        <div class="auth-hero-inner">
+          <div class="brand-lockup anim-1">
+            <div class="brand-hex spinning" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4L34 12V28L20 36L6 28V12L20 4Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+                <path d="M20 4L20 36" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+                <path d="M6 12L34 28" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+                <path d="M34 12L6 28" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+              </svg>
+            </div>
+            <div>
+              <span class="brand-name-auth">InnovatEPAM</span>
+              <span class="brand-version">Portal v1 · MVP</span>
+            </div>
+          </div>
+
+          <h1 class="auth-hero-title anim-2">Where great ideas<br>find their audience.</h1>
+          <p class="auth-hero-sub anim-3">Submit innovations, track decisions, and drive organizational change — in a clean, auditable workflow built for modern teams.</p>
+
+          <div class="auth-features anim-4">
+            <div class="feat">
+              <span class="feat-num">01</span>
+              <div>
+                <strong>Submit</strong>
+                <span>Ideas with category, description &amp; file support</span>
+              </div>
+            </div>
+            <div class="feat">
+              <span class="feat-num">02</span>
+              <div>
+                <strong>Track</strong>
+                <span>Real-time pipeline with full status history</span>
+              </div>
+            </div>
+            <div class="feat">
+              <span class="feat-num">03</span>
+              <div>
+                <strong>Decide</strong>
+                <span>Evaluator review with timestamped audit trail</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating idea preview cards -->
+          <div class="hero-idea-preview anim-5" aria-hidden="true">
+            <div class="hip-card hip-card-1">
+              <div class="hip-top">
+                <span class="status-badge accepted">Accepted</span>
+                <span class="hip-cat">AI &amp; Automation</span>
+              </div>
+              <strong>Smart meeting summarizer</strong>
+              <p>AI automatically generates action items from recorded sessions.</p>
+            </div>
+            <div class="hip-card hip-card-2">
+              <div class="hip-top">
+                <span class="status-badge review">Under Review</span>
+                <span class="hip-cat">Process</span>
+              </div>
+              <strong>Zero-waste sprint retro</strong>
+              <p>Async-first retro format that cuts meeting time by 60%.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Auth card -->
+      <div class="auth-right">
+        <div class="auth-card">
+
+          <!-- Forms area -->
+          <div class="auth-forms-wrap" id="authFormsWrap">
+
+            <!-- Sign In -->
+            <div class="auth-form-panel" id="signInPanel" data-panel="signin">
+              <div class="form-head">
+                <h2>Sign in</h2>
+                <p>Welcome back — your ideas are waiting.</p>
+              </div>
+
+              <div class="demo-chips" id="demoAccess"></div>
+
+              <!-- method="post" prevents credentials appearing in URL -->
+              <form id="loginForm" class="stacked-form" method="post" action="" novalidate>
+                <label>
+                  Email address
+                  <input name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+                </label>
+                <label>
+                  Password
+                  <div class="pw-wrap">
+                    <input name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+                    <button type="button" class="pw-eye" aria-label="Show password" tabindex="-1">
+                      <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                </label>
+                <button class="primary-button" type="submit">Sign in</button>
+                <p class="form-message" id="loginMessage" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <!-- Register -->
+            <div class="auth-form-panel" id="registerPanel" data-panel="register" hidden>
+              <div class="form-head">
+                <h2>Create account</h2>
+                <p>Join the portal and start submitting ideas.</p>
+              </div>
+
+              <!-- method="post" prevents credentials appearing in URL -->
+              <form id="registerForm" class="stacked-form" method="post" action="" novalidate>
+                <label>
+                  Full name
+                  <input name="name" type="text" autocomplete="name" placeholder="Your full name" required>
+                </label>
+                <label>
+                  Email address
+                  <input name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+                </label>
+                <label>
+                  Role
+                  <select name="role">
+                    <option value="submitter">Submitter — submit ideas</option>
+                    <option value="admin">Evaluator Admin — review ideas</option>
+                  </select>
+                </label>
+                <label>
+                  Password
+                  <div class="pw-wrap">
+                    <input name="password" type="password" autocomplete="new-password" placeholder="Min 8 chars, letters + numbers" minlength="8" required>
+                    <button type="button" class="pw-eye" aria-label="Show password" tabindex="-1">
+                      <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                </label>
+                <button class="primary-button" type="submit">Create account</button>
+                <p class="form-message" id="registerMessage" aria-live="polite"></p>
+              </form>
+            </div>
+
+          </div><!-- /auth-forms-wrap -->
+
+          <!-- Animated tab switcher -->
+          <div class="auth-switcher">
+            <div class="auth-tabs" role="tablist" aria-label="Auth mode">
+              <div class="auth-tab-pill" id="authTabPill" aria-hidden="true"></div>
+              <button class="auth-tab active" id="tabSignIn" role="tab" aria-selected="true" data-target="signin" type="button">Sign in</button>
+              <button class="auth-tab" id="tabRegister" role="tab" aria-selected="false" data-target="register" type="button">Register</button>
+            </div>
+          </div>
+
+        </div><!-- /auth-card -->
+      </div><!-- /auth-right -->
+    </div><!-- /auth-page -->
+
+
+    <!-- ═══════════════════════════════════════
+         APP SHELL (authenticated)
+    ═══════════════════════════════════════ -->
+    <div id="appView" class="app-shell" hidden>
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand-block">
+            <div class="brand-hex small" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4L34 12V28L20 36L6 28V12L20 4Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>
+                <path d="M20 4L20 36" stroke="currentColor" stroke-width="1.3" opacity="0.45"/>
+                <path d="M6 12L34 28" stroke="currentColor" stroke-width="1.3" opacity="0.45"/>
+                <path d="M34 12L6 28" stroke="currentColor" stroke-width="1.3" opacity="0.45"/>
+              </svg>
+            </div>
+            <span class="brand-name">InnovatEPAM</span>
+          </div>
+
+          <nav class="primary-nav" aria-label="Primary navigation">
+            <a href="#dashboard" data-route-link="dashboard">Dashboard</a>
+            <a href="#submit" data-route-link="submit">Submit Idea</a>
+            <a href="#guide" data-route-link="guide">Docs</a>
+          </nav>
+
+          <div class="topbar-right">
+            <div class="user-chip" id="userChip"></div>
+            <button class="topbar-help-btn" id="showGuideBtn" type="button" title="Getting started guide">?</button>
+            <button class="theme-toggle ghost-button" id="topbarThemeToggle" type="button">☀ Light</button>
+            <button class="ghost-button" id="resetDemoButton" type="button">Reset demo</button>
+            <button class="danger-button" id="logoutButton" type="button" hidden>Logout</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <main class="app-content">
+
+        <!-- ── DASHBOARD VIEW ── -->
+        <section id="dashboardView" class="view" hidden>
+          <div class="view-hero">
+            <div class="view-hero-text">
+              <p class="eyebrow">Workspace</p>
+              <h2 id="workspaceTitle">Innovation review console</h2>
+              <p id="workspaceCopy" class="view-sub">Capture ideas, keep context attached, and move decisions through a clean review trail.</p>
+            </div>
+            <div class="view-hero-ctas">
+              <a class="primary-link" href="#submit">+ Submit idea</a>
+              <a class="secondary-link" href="#guide">How it works</a>
+            </div>
+          </div>
+
+          <!-- First-time welcome banner (injected by JS) -->
+          <div id="welcomeBanner"></div>
+
+          <div class="metrics-grid" id="metricsPanel"></div>
+
+          <!-- My Drafts section (submitters only) -->
+          <div class="ideas-section drafts-section" id="draftsSection" hidden>
+            <div class="ideas-toolbar">
+              <div>
+                <p class="eyebrow">In progress</p>
+                <h3>My drafts</h3>
+              </div>
+            </div>
+            <div class="ideas-list" id="draftsList" aria-live="polite"></div>
+          </div>
+
+          <div class="ideas-section">
+            <div class="ideas-toolbar">
+              <div>
+                <p class="eyebrow">Pipeline</p>
+                <h3>Idea board</h3>
+              </div>
+              <div class="filters">
+                <input id="searchInput" type="search" placeholder="Search ideas…" aria-label="Search ideas">
+                <select id="statusFilter" aria-label="Filter by status"></select>
+                <button class="secondary-button sort-composite-btn" type="button" data-sort-composite title="Sort by composite score (admins only)">Sort: Composite</button>
+              </div>
+            </div>
+            <div class="ideas-list" id="ideasList" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- ── SUBMIT VIEW ── -->
+        <section id="submitView" class="view" hidden>
+          <div class="submit-layout">
+            <div class="submit-info">
+              <p class="eyebrow">New submission</p>
+              <h2>Share your idea</h2>
+              <p class="view-sub">A strong idea names the problem clearly, proposes a solution, and hints at impact. Add a file if it helps make your case.</p>
+
+              <div class="tip-list tip-list--grid">
+                <div class="tip">
+                  <span class="tip-icon">💡</span>
+                  <div>
+                    <strong>Be specific</strong>
+                    <p>Name the exact problem, not just the solution.</p>
+                  </div>
+                </div>
+                <div class="tip">
+                  <span class="tip-icon">📎</span>
+                  <div>
+                    <strong>Attach context</strong>
+                    <p>A doc or diagram strengthens your case.</p>
+                  </div>
+                </div>
+                <div class="tip">
+                  <span class="tip-icon">🎯</span>
+                  <div>
+                    <strong>Right category</strong>
+                    <p>Routes your idea to the right expert.</p>
+                  </div>
+                </div>
+                <div class="tip">
+                  <span class="tip-icon">✍️</span>
+                  <div>
+                    <strong>Mention impact</strong>
+                    <p>What changes if this idea is implemented?</p>
+                  </div>
+                </div>
+              </div>
+
+              <section class="profile-card" id="sessionPanel"></section>
+            </div>
+
+            <div class="submit-card" id="submitPanel">
+              <!-- Draft/revision editing banner (hidden by default) -->
+              <div id="draftEditBanner" class="draft-edit-banner" hidden>
+                <span class="draft-edit-label">Editing draft</span>
+                <div class="draft-edit-actions">
+                  <button class="ghost-button" type="button" id="cancelRevisionBtn" hidden>Cancel revision</button>
+                  <button class="ghost-button" type="button" id="discardDraftBtn">Discard draft</button>
+                </div>
+              </div>
+              <div class="panel-heading compact">
+                <p class="eyebrow">Submission</p>
+                <h3 id="submitPanelTitle">New idea</h3>
+              </div>
+              <!-- method="post" prevents form data in URL -->
+              <form id="ideaForm" class="stacked-form compact-form" method="post" action="">
+                <div class="form-row">
+                  <label>
+                    Idea title
+                    <input name="title" type="text" maxlength="90" placeholder="e.g. AI-powered meeting summarizer">
+                    <span class="char-counter" id="titleCounter">0 / 90</span>
+                  </label>
+                  <label>
+                    Category
+                    <select name="category" id="categorySelect" required></select>
+                  </label>
+                </div>
+                <div id="extraFieldsBlock" class="extra-fields-section-wrap"></div>
+                <label>
+                  Description
+                  <textarea name="description" rows="3" maxlength="2500" placeholder="Describe the problem, your solution, and the expected impact…"></textarea>
+                  <span class="char-counter" id="descCounter">0 / 2500</span>
+                </label>
+                <div id="existingAttachmentsList" class="existing-attachments-list" hidden></div>
+                <label>
+                  <span>Support files <span class="optional-tag">(optional · max 5 · 8 MB total)</span></span>
+                  <div class="file-drop-zone" id="fileDropZone">
+                    <input name="attachment" type="file" id="attachmentInput" multiple>
+                    <div class="fdz-placeholder" id="fdzPlaceholder">
+                      <span class="fdz-icon">📎</span>
+                      <span>Click to browse or drag files here</span>
+                      <span class="fdz-hint">Any format · max 5 files · 8 MB total</span>
+                      <span class="fdz-hint">Examples: PDF, images, slides, video, .docx, .csv, .zip</span>
+                    </div>
+                  </div>
+                </label>
+                <div class="form-actions-row">
+                  <label class="blind-review-inline" title="Hides your identity from evaluators until a final decision is made.">
+                    <input type="checkbox" name="blind_review" id="blindReviewCheck">
+                    <span>Submit anonymously</span>
+                  </label>
+                  <div class="actions-buttons">
+                    <button class="secondary-button" type="button" id="saveDraftBtn">Save as draft</button>
+                    <button class="primary-button" type="submit" id="submitIdeaBtn">Submit idea</button>
+                  </div>
+                </div>
+                <p class="form-message" id="ideaMessage" aria-live="polite"></p>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── GUIDE / DOCS VIEW ── -->
+        <section id="guideView" class="view" hidden>
+          <div class="docs-layout">
+            <nav class="docs-sidebar" aria-label="Documentation sections">
+              <p class="eyebrow">Documentation</p>
+              <ul class="docs-nav-list">
+                <li><a href="#" class="docs-link active" data-section="overview">Overview</a></li>
+                <li><a href="#" class="docs-link" data-section="submitter">Submitter guide</a></li>
+                <li><a href="#" class="docs-link" data-section="admin">Admin guide</a></li>
+                <li><a href="#" class="docs-link" data-section="statuses">Status workflow</a></li>
+                <li><a href="#" class="docs-link" data-section="faq">FAQ</a></li>
+              </ul>
+            </nav>
+
+            <div class="docs-body" id="docsBody">
+
+              <article class="docs-section active" data-section="overview">
+                <h2>Portal Overview</h2>
+                <p>InnovatEPAM Portal is an employee innovation management platform that lets employees submit ideas, track progress, and get structured feedback from evaluators — all with a visible audit trail.</p>
+
+                <div class="docs-cards">
+                  <div class="docs-card">
+                    <span class="docs-num">01</span>
+                    <h3>Submit an idea</h3>
+                    <p>Any registered submitter can create an idea with a title, description, category, and optional file (max 2 MB).</p>
+                  </div>
+                  <div class="docs-card">
+                    <span class="docs-num">02</span>
+                    <h3>Track progress</h3>
+                    <p>Watch your idea move through: <strong>Submitted → Under Review → Accepted</strong> or <strong>Rejected</strong>.</p>
+                  </div>
+                  <div class="docs-card">
+                    <span class="docs-num">03</span>
+                    <h3>Get feedback</h3>
+                    <p>Every status change includes an evaluator comment explaining the decision clearly.</p>
+                  </div>
+                </div>
+
+                <h3>Quick start</h3>
+                <ol class="docs-steps">
+                  <li><strong>Sign in or register</strong> — use demo accounts or create your own account</li>
+                  <li><strong>Choose your role</strong> — Submitter to create, Evaluator Admin to review</li>
+                  <li><strong>Submit your first idea</strong> — go to Submit Idea and fill the form</li>
+                  <li><strong>Track on dashboard</strong> — see status and full decision history</li>
+                </ol>
+
+                <div class="docs-callout info">
+                  <strong>Demo accounts:</strong> Use <code>admin@innovatepam.local / Admin123!</code> or <code>aylin@epam.local / Submit123!</code> to explore both roles instantly.
+                </div>
+              </article>
+
+              <article class="docs-section" data-section="submitter" hidden>
+                <h2>Submitter Guide</h2>
+                <p>As a submitter, you create and track your own ideas. Here's everything you need to know to make the most of the portal.</p>
+
+                <h3>Creating a strong idea</h3>
+                <ol class="docs-steps">
+                  <li>Go to <strong>Submit Idea</strong> in the top navigation</li>
+                  <li>Enter a clear, actionable <strong>title</strong> (5–90 characters)</li>
+                  <li>Select the most relevant <strong>category</strong> from the dropdown</li>
+                  <li>Write a <strong>description</strong> that covers: the problem, your proposed solution, and expected impact (min 20 chars)</li>
+                  <li>Optionally attach a <strong>support file</strong> — any format, max 2 MB</li>
+                  <li>Click <strong>Submit idea</strong> — it enters the review pipeline immediately</li>
+                </ol>
+
+                <div class="docs-callout info">
+                  <strong>Pro tip:</strong> Ideas with clear impact statements and an attached file are significantly more likely to be accepted. Evaluators respond better to evidence than to assertions.
+                </div>
+
+                <h3>Available categories</h3>
+                <ul class="docs-list">
+                  <li><strong>AI and Automation</strong> — AI/ML tools, automation scripts, intelligent workflows</li>
+                  <li><strong>Customer Experience</strong> — improvements to client-facing products or services</li>
+                  <li><strong>Developer Productivity</strong> — dev tooling, CI/CD improvements, code quality</li>
+                  <li><strong>Process Improvement</strong> — workflow optimizations, cross-team efficiency</li>
+                  <li><strong>Sustainability</strong> — environmental impact, energy efficiency, ESG initiatives</li>
+                  <li><strong>Workplace Experience</strong> — office environment, remote work, culture</li>
+                </ul>
+
+                <h3>Tracking your ideas</h3>
+                <p>Visit the <strong>Dashboard</strong> to see all your submitted ideas. Use the search bar and status filter to narrow results. Expand the <em>Status history</em> section on each card to see the full audit trail.</p>
+
+                <div class="docs-callout info">
+                  <strong>Note:</strong> Submitters see only their own ideas. Evaluator Admins see all ideas from all users.
+                </div>
+              </article>
+
+              <article class="docs-section" data-section="admin" hidden>
+                <h2>Evaluator Admin Guide</h2>
+                <p>As an evaluator admin, you review and make decisions on all submitted ideas. Your feedback shapes the innovation culture of the organization.</p>
+
+                <h3>Reviewing ideas effectively</h3>
+                <ol class="docs-steps">
+                  <li>Go to <strong>Dashboard</strong> — you see all ideas across all submitters</li>
+                  <li>Use the <strong>status filter</strong> to find ideas in "Submitted" status</li>
+                  <li>Read the idea description and download any attached files</li>
+                  <li>Use the <strong>review form</strong> at the bottom of each idea card</li>
+                  <li>Select a new <strong>status</strong> — Under Review, Accepted, or Rejected</li>
+                  <li>Add a clear <strong>evaluator comment</strong> — required for Accept/Reject decisions</li>
+                  <li>Click <strong>Update</strong> — submitter sees the change immediately</li>
+                </ol>
+
+                <div class="docs-callout warn">
+                  <strong>Important:</strong> A comment is required when accepting or rejecting. Write a genuine explanation — submitters use this feedback to improve future ideas.
+                </div>
+
+                <h3>Review workflow</h3>
+                <div class="status-flow">
+                  <span class="status-badge new">Submitted</span>
+                  <span class="flow-arrow">→</span>
+                  <span class="status-badge review">Under Review</span>
+                  <span class="flow-arrow">→</span>
+                  <span class="status-badge accepted">Accepted</span>
+                </div>
+                <div class="status-flow" style="margin-top:10px">
+                  <span class="status-badge review">Under Review</span>
+                  <span class="flow-arrow">→</span>
+                  <span class="status-badge rejected">Rejected</span>
+                </div>
+
+                <h3>Best practices</h3>
+                <ul class="docs-list">
+                  <li>Review all attachments before making a decision</li>
+                  <li>Use "Under Review" to signal that an idea has been noticed before making a final call</li>
+                  <li>Always explain <em>why</em> — not just "rejected" but what would make the idea stronger</li>
+                  <li>Aim to review all "Submitted" ideas within a reasonable timeframe</li>
+                </ul>
+              </article>
+
+              <article class="docs-section" data-section="statuses" hidden>
+                <h2>Status Workflow</h2>
+                <p>Every idea moves through a defined set of statuses, each with a specific meaning and set of rules.</p>
+
+                <div class="status-doc-grid">
+                  <div class="status-doc">
+                    <span class="status-badge new">Submitted</span>
+                    <h3>Submitted</h3>
+                    <p>Idea created and in the queue, waiting for an evaluator to begin review.</p>
+                    <p class="status-who"><strong>Set by:</strong> System (automatic on create)</p>
+                  </div>
+                  <div class="status-doc">
+                    <span class="status-badge review">Under Review</span>
+                    <h3>Under Review</h3>
+                    <p>An evaluator admin is actively reviewing the idea. Feedback is coming.</p>
+                    <p class="status-who"><strong>Set by:</strong> Evaluator Admin</p>
+                  </div>
+                  <div class="status-doc">
+                    <span class="status-badge accepted">Accepted</span>
+                    <h3>Accepted</h3>
+                    <p>The idea has been approved and may proceed to implementation or further planning.</p>
+                    <p class="status-who"><strong>Set by:</strong> Evaluator Admin (comment required)</p>
+                  </div>
+                  <div class="status-doc">
+                    <span class="status-badge rejected">Rejected</span>
+                    <h3>Rejected</h3>
+                    <p>Not approved in current form. The evaluator comment explains why and suggests improvements.</p>
+                    <p class="status-who"><strong>Set by:</strong> Evaluator Admin (comment required)</p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="docs-section" data-section="faq" hidden>
+                <h2>Frequently Asked Questions</h2>
+
+                <details class="faq">
+                  <summary>Can I edit an idea after submitting?</summary>
+                  <p>Not in the current MVP version. Plan your submission carefully before clicking Submit. Future versions will include draft management (save and edit before submitting).</p>
+                </details>
+                <details class="faq">
+                  <summary>What file types can I attach?</summary>
+                  <p>Any file type is supported, with a maximum size of 2 MB. Useful formats include PDF, DOCX, XLSX, PNG, JPG, or TXT.</p>
+                </details>
+                <details class="faq">
+                  <summary>Can I submit multiple ideas?</summary>
+                  <p>Yes! There's no limit on the number of ideas you can submit. Each idea is tracked independently through the workflow.</p>
+                </details>
+                <details class="faq">
+                  <summary>Why can't I see other users' ideas?</summary>
+                  <p>Submitters can only see their own ideas. Evaluator Admins see all ideas across all users — this is by design so submitters can't copy each other's ideas before review.</p>
+                </details>
+                <details class="faq">
+                  <summary>Is my data saved between sessions?</summary>
+                  <p>Yes, data is stored in your browser's localStorage. Clearing browser data or clicking "Reset demo" will erase everything. This is a browser-local MVP.</p>
+                </details>
+                <details class="faq">
+                  <summary>How do I switch between roles?</summary>
+                  <p>Log out and log in with a different account. Use the demo buttons on the sign-in page for quick role switching between Admin and Submitter.</p>
+                </details>
+                <details class="faq">
+                  <summary>I see my password in the URL — is that a bug?</summary>
+                  <p>This would be a browser autofill artifact. All forms now use <code>method="post"</code> which prevents form data from appearing in URLs. Passwords are never stored in plain text — only a hashed version is kept.</p>
+                </details>
+              </article>
+
+            </div><!-- /docs-body -->
+          </div><!-- /docs-layout -->
+        </section>
+
+        <p class="route-message" id="routeMessage" aria-live="polite" hidden></p>
+
+      </main>
+
+      <footer class="site-footer">
+        <span>InnovatEPAM Portal · Phase 1 MVP · A201 Beyond Vibe Coding</span>
+        <span class="footer-credit">Built with <span class="footer-heart">♥</span> by <a href="https://github.com/bilgeozcan" target="_blank" rel="noopener noreferrer">bilgeozcan</a></span>
+        <button class="site-footer-guide" id="footerGuideBtn" type="button">Need help? View getting started →</button>
+      </footer>
+    </div><!-- /app-shell -->
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

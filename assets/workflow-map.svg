@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="96" viewBox="0 0 220 96" role="img" aria-labelledby="title desc">
+  <title id="title">InnovatEPAM workflow map</title>
+  <desc id="desc">Four connected stages: submitted, review, accepted, rejected.</desc>
+  <rect width="220" height="96" rx="8" fill="#f6f0e6"/>
+  <path d="M29 48h160" stroke="#24211d" stroke-width="2" stroke-dasharray="5 8" stroke-linecap="round"/>
+  <circle cx="32" cy="48" r="18" fill="#2f7f6f"/>
+  <circle cx="84" cy="48" r="18" fill="#d89b2b"/>
+  <circle cx="136" cy="48" r="18" fill="#485b8f"/>
+  <circle cx="188" cy="48" r="18" fill="#b94d3f"/>
+  <path d="M26 48l4 4 9-10" fill="none" stroke="#fffaf1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M77 47h14M84 40v14" stroke="#fffaf1" stroke-width="3" stroke-linecap="round"/>
+  <path d="M129 48l5 5 11-13" fill="none" stroke="#fffaf1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M181 41l14 14M195 41l-14 14" stroke="#fffaf1" stroke-width="3" stroke-linecap="round"/>
+  <text x="32" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#24211d">submit</text>
+  <text x="84" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#24211d">review</text>
+  <text x="136" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#24211d">accept</text>
+  <text x="188" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#24211d">reject</text>
+</svg>

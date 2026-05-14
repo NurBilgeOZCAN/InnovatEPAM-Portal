@@ -1,0 +1,23 @@
+{
+  "name": "innovatepam-portal",
+  "version": "1.0.0",
+  "description": "InnovatEPAM Portal MVP for the A201 Beyond Vibe Coding project sprint.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "smoke:edge": "node scripts/edge-smoke.mjs",
+    "test": "node --test --experimental-test-coverage tests/portal-core.test.mjs tests/api.test.mjs",
+    "check": "npm test",
+    "reset:db": "node -e \"import('node:fs').then(({rmSync})=>rmSync('data/innovatepam.db',{force:true})).then(()=>console.log('DB deleted.'))\""
+  },
+  "keywords": [
+    "innovation",
+    "portal",
+    "mvp",
+    "bootcamp"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.10.0"
+  }
+}
