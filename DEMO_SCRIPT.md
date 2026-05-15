@@ -92,13 +92,9 @@ tests/api.test.mjs
 tests/portal-core.test.mjs
 ```
 
-Say:
-
 > The project follows a spec-driven workflow. The PRD and stories define the expected behavior, ADRs document technical decisions, SpecKit artifacts describe the full implementation plan, and the automated test suite verifies the major flows.
 
 ### 5. Closing - 30 seconds
-
-Say:
 
 > My key learning was that AI-generated code becomes much more reliable when it is guided by clear specifications, ADRs, and tests. Compared to vibe coding, the SpecKit workflow made the project easier to reason about, validate, and present.
 
